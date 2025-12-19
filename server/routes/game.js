@@ -92,6 +92,12 @@ async function updateLeaderboard(userId, sessionId, score) {
     
     // Upsert leaderboard
     if (userId) {
+      // If there is an existing session-only row, attach it to the user
+      await query(
+        'UPDATE leaderboards SET user_id = $1 WHERE session_id = $2 AND (user_id IS NULL OR user_id != $1)',
+        [userId, sessionId]
+      );
+
       await query(
         `INSERT INTO leaderboards (user_id, session_id, daily_score, weekly_score, all_time_score, updated_at) 
          VALUES ($1, $2, $3, $4, $5, NOW()) 
