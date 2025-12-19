@@ -17,7 +17,6 @@ interface LeaderboardEntry {
 const Leaderboard = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [type, setType] = useState<'daily' | 'weekly' | 'alltime'>('daily');
-  const [source, setSource] = useState<'live' | 'local'>('live');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [nickname, setNickname] = useState('');
@@ -39,12 +38,10 @@ const Leaderboard = () => {
       try {
         const data = await getLeaderboard(type);
         setLeaderboard(data.leaderboard || []);
-        setSource(data.source === 'local' ? 'local' : 'live');
       } catch (error: any) {
         console.error('Error fetching leaderboard:', error);
         setError(error?.message || 'Failed to load leaderboard. Make sure backend is running.');
         setLeaderboard([]);
-        setSource('local');
       } finally {
         setIsLoading(false);
       }
@@ -95,7 +92,6 @@ const Leaderboard = () => {
       // Refresh leaderboard to display nickname
       const data = await getLeaderboard(type);
       setLeaderboard(data.leaderboard || []);
-      setSource(data.source === 'local' ? 'local' : 'live');
     } catch (error: any) {
       setSaveMessage(error?.message || 'Failed to save profile');
     } finally {
