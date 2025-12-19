@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Default to provided token so stats work out-of-the-box. Override with VITE_CONTRACT_ADDRESS in .env.
-const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS || 'Dfh5DzRgSvvCFDoYc2ciTkMrbDfRKybA4SoFbPmApump';
+const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS || '9QUVB18AoyP5wNNuY3jrHXeVeS3ek9ucNuM9MoDzpump';
 
 interface TokenStats {
   priceUSD: string;

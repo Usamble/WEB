@@ -3,7 +3,7 @@ import { FaCopy, FaCheck, FaExternalLinkAlt } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 
-const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS || 'FVcMs7GEVWmcs9beeaSxz6VhqJUGukEfTBsNGGfKpump';
+const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS || '9QUVB18AoyP5wNNuY3jrHXeVeS3ek9ucNuM9MoDzpump';
 const NETWORK = import.meta.env.VITE_NETWORK || 'mainnet-beta';
 const EXPLORER_URL = NETWORK.includes('solana') 
   ? `https://solscan.io/token/${CONTRACT_ADDRESS}`
