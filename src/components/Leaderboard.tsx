@@ -135,44 +135,6 @@ const Leaderboard = () => {
           ))}
         </div>
 
-        {/* Profile Save */}
-        <div className="glass-card rounded-3xl p-6 mb-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-2">Set nickname + wallet</h3>
-          <p className="text-sm text-gray-600 mb-4">Leaderboard will show your nickname and wallet.</p>
-          <form className="grid gap-3 md:grid-cols-2" onSubmit={handleSaveProfile}>
-            <input
-              type="text"
-              placeholder="Nickname (3-24 chars)"
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              className="w-full border rounded-lg px-4 py-3 bg-white"
-              required
-              minLength={3}
-              maxLength={24}
-            />
-            <input
-              type="text"
-              placeholder="Wallet address"
-              value={walletInput}
-              onChange={(e) => setWalletInput(e.target.value)}
-              className="w-full border rounded-lg px-4 py-3 bg-white"
-              required
-            />
-            <div className="md:col-span-2 flex items-center gap-3">
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                type="submit"
-                disabled={saving}
-                className="gradient-button text-white font-bold px-5 py-3 rounded-lg disabled:opacity-60"
-              >
-                {saving ? 'Saving...' : 'Save Profile'}
-              </motion.button>
-              {saveMessage && <span className="text-sm text-gray-700">{saveMessage}</span>}
-            </div>
-          </form>
-        </div>
-
         {/* Current player summary */}
         {walletAddress && (
           <div className="glass-card rounded-3xl p-4 mb-6 border border-blue-100">
