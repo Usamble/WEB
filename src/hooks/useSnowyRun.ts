@@ -1019,17 +1019,15 @@ export const useSnowyRun = (playfieldWidth = 900) => {
   }, [unlockedSkins, startSpeedBonus]);
 
   const endGame = useCallback(async () => {
-    if (gameState.score > 0) {
-      try {
-        const submitRes = await submitScore(gameState.score, walletAddress || undefined);
-        if (submitRes?.dailyRunCount !== undefined) {
-          setDailyRunCount(submitRes.dailyRunCount);
-        }
-        const stats = await getUserStats(walletAddress || undefined);
-        setDailyRunCount(stats.dailyRunCount);
-      } catch (error) {
-        console.error('Error submitting score:', error);
+    try {
+      const submitRes = await submitScore(gameState.score, walletAddress || undefined);
+      if (submitRes?.dailyRunCount !== undefined) {
+        setDailyRunCount(submitRes.dailyRunCount);
       }
+      const stats = await getUserStats(walletAddress || undefined);
+      setDailyRunCount(stats.dailyRunCount);
+    } catch (error) {
+      console.error('Error submitting score:', error);
     }
 
     // Lootbox reward (every 3 runs or big score)

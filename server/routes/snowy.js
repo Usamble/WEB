@@ -1,16 +1,16 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 import { query } from '../db/index.js';
 import { v4 as uuidv4 } from 'uuid';
 
 const router = Router();
 
 // Generate unique Snowy ID
-function generateSnowyId(): string {
+function generateSnowyId() {
   return `SNOWY-${uuidv4().toUpperCase().replace(/-/g, '').substring(0, 16)}`;
 }
 
 // Generate rarity traits from Snowy ID
-function generateRarityTraits(snowyId: string) {
+function generateRarityTraits(snowyId) {
   const hash = snowyId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   
   const backgrounds = ['Winter Forest', 'Snowy Mountain', 'Ice Cave', 'Northern Lights', 'Christmas Town'];
@@ -39,10 +39,10 @@ function generateRarityTraits(snowyId: string) {
 }
 
 // Save Snowy generation
-router.post('/save', async (req: Request, res: Response) => {
+router.post('/save', async (req, res) => {
   try {
     const { imageUrl, style } = req.body;
-    const sessionId = (req as any).sessionId;
+    const sessionId = req.sessionId;
     const walletAddress = req.body.walletAddress;
     
     if (!imageUrl) {
@@ -79,17 +79,17 @@ router.post('/save', async (req: Request, res: Response) => {
       imageUrl,
       style: style || 'default',
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Save Snowy error:', error);
     res.status(500).json({ error: error.message || 'Failed to save Snowy' });
   }
 });
 
 // Get user's Snowy generations
-router.get('/my-snowys', async (req: Request, res: Response) => {
+router.get('/my-snowys', async (req, res) => {
   try {
-    const sessionId = (req as any).sessionId;
-    const walletAddress = req.query.walletAddress as string;
+    const sessionId = req.sessionId;
+    const walletAddress = req.query.walletAddress;
     
     let userId = null;
     if (walletAddress) {
@@ -119,14 +119,14 @@ router.get('/my-snowys', async (req: Request, res: Response) => {
         ? JSON.parse(row.rarity_traits) 
         : row.rarity_traits,
     })));
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get Snowys error:', error);
     res.status(500).json({ error: error.message || 'Failed to get Snowys' });
   }
 });
 
 // Get Snowy by ID
-router.get('/:snowyId', async (req: Request, res: Response) => {
+router.get('/:snowyId', async (req, res) => {
   try {
     const { snowyId } = req.params;
     
@@ -146,22 +146,22 @@ router.get('/:snowyId', async (req: Request, res: Response) => {
         ? JSON.parse(snowy.rarity_traits) 
         : snowy.rarity_traits,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get Snowy error:', error);
     res.status(500).json({ error: error.message || 'Failed to get Snowy' });
   }
 });
 
 // Get gallery (public Snowys)
-router.get('/gallery/list', async (req: Request, res: Response) => {
+router.get('/gallery/list', async (req, res) => {
   try {
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 20;
-    const style = req.query.style as string;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const style = req.query.style;
     const offset = (page - 1) * limit;
     
     let queryText = 'SELECT * FROM snowy_generations WHERE 1=1';
-    const params: any[] = [];
+    const params = [];
     let paramIndex = 1;
     
     if (style && style !== 'all') {
@@ -186,11 +186,10 @@ router.get('/gallery/list', async (req: Request, res: Response) => {
       limit,
       total: result.rows.length,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get gallery error:', error);
     res.status(500).json({ error: error.message || 'Failed to get gallery' });
   }
 });
 
 export default router;
-

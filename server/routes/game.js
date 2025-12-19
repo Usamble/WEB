@@ -1,24 +1,27 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 import { query } from '../db/index.js';
 
 const router = Router();
 
 // Submit game score
-router.post('/submit-score', async (req: Request, res: Response) => {
+router.post('/submit-score', async (req, res) => {
   try {
     const { score } = req.body;
-    const sessionId = (req as any).sessionId;
+    const sessionId = req.sessionId;
     const walletAddress = req.body.walletAddress;
     
     if (!score || typeof score !== 'number' || score < 0) {
       return res.status(400).json({ error: 'Valid score required' });
     }
     
-    // Get user ID if wallet is provided
+    // Upsert user if wallet is provided
     let userId = null;
     if (walletAddress) {
       const userResult = await query(
-        'SELECT id FROM users WHERE wallet_address = $1',
+        `INSERT INTO users (wallet_address, last_active)
+         VALUES ($1, NOW())
+         ON CONFLICT (wallet_address) DO UPDATE SET last_active = NOW()
+         RETURNING id`,
         [walletAddress]
       );
       userId = userResult.rows[0]?.id || null;
@@ -51,14 +54,14 @@ router.post('/submit-score', async (req: Request, res: Response) => {
       dailyRunCount,
       date: today,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Submit score error:', error);
     res.status(500).json({ error: error.message || 'Failed to submit score' });
   }
 });
 
 // Update leaderboard
-async function updateLeaderboard(userId: number | null, sessionId: string, score: number) {
+async function updateLeaderboard(userId, sessionId, score) {
   try {
     const today = new Date().toISOString().split('T')[0];
     const weekStart = getWeekStart();
@@ -119,10 +122,10 @@ async function updateLeaderboard(userId: number | null, sessionId: string, score
 }
 
 // Get leaderboard
-router.get('/leaderboard', async (req: Request, res: Response) => {
+router.get('/leaderboard', async (req, res) => {
   try {
-    const type = (req.query.type as string) || 'daily';
-    const limit = parseInt(req.query.limit as string) || 100;
+    const type = (req.query.type) || 'daily';
+    const limit = parseInt(req.query.limit) || 100;
     
     let orderBy = 'daily_score DESC';
     if (type === 'weekly') {
@@ -155,7 +158,7 @@ router.get('/leaderboard', async (req: Request, res: Response) => {
       type,
       leaderboard,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get leaderboard error:', error);
     // Return empty leaderboard instead of error if database is not available
     if (error.code === '28000' || error.code === '3D000' || error.code === 'ECONNREFUSED') {
@@ -169,10 +172,10 @@ router.get('/leaderboard', async (req: Request, res: Response) => {
 });
 
 // Get user stats
-router.get('/user-stats', async (req: Request, res: Response) => {
+router.get('/user-stats', async (req, res) => {
   try {
-    const sessionId = (req as any).sessionId;
-    const walletAddress = req.query.walletAddress as string;
+    const sessionId = req.sessionId;
+    const walletAddress = req.query.walletAddress;
     
     let userId = null;
     if (walletAddress) {
@@ -227,14 +230,14 @@ router.get('/user-stats', async (req: Request, res: Response) => {
       allTimeBestScore: parseInt(allTimeBest.rows[0].score) || 0,
       dailyRank: parseInt(leaderboardRank.rows[0].rank) || null,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get user stats error:', error);
     res.status(500).json({ error: error.message || 'Failed to get user stats' });
   }
 });
 
 // Helper function to get week start (Monday)
-function getWeekStart(): string {
+function getWeekStart() {
   const now = new Date();
   const day = now.getDay();
   const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday

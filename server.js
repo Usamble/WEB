@@ -10,17 +10,17 @@ import { dirname, join } from 'path';
 import dotenv from 'dotenv';
 
 // Import database and routes
-import { initDatabase } from './server/db/index.ts';
-import { sessionMiddleware } from './server/middleware/session.ts';
-import { botProtection } from './server/middleware/botProtection.ts';
-import { apiLimiter, generationLimiter, gameLimiter, actionLimiter } from './server/middleware/rateLimit.ts';
+import { initDatabase } from './server/db/index.js';
+import { sessionMiddleware } from './server/middleware/session.js';
+import { botProtection } from './server/middleware/botProtection.js';
+import { apiLimiter, generationLimiter, gameLimiter, actionLimiter } from './server/middleware/rateLimit.js';
 
 // Import routes
-import authRoutes from './server/routes/auth.ts';
-import snowyRoutes from './server/routes/snowy.ts';
-import gameRoutes from './server/routes/game.ts';
-import calendarRoutes from './server/routes/calendar.ts';
-import giveawayRoutes from './server/routes/giveaway.ts';
+import authRoutes from './server/routes/auth.js';
+import snowyRoutes from './server/routes/snowy.js';
+import gameRoutes from './server/routes/game.js';
+import calendarRoutes from './server/routes/calendar.js';
+import giveawayRoutes from './server/routes/giveaway.js';
 
 dotenv.config();
 

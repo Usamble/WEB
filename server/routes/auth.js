@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 import { PublicKey } from '@solana/web3.js';
 import { randomBytes } from 'crypto';
 import nacl from 'tweetnacl';
@@ -8,7 +8,7 @@ import { getUserFromWallet } from '../middleware/session.js';
 
 const router = Router();
 
-const isValidSolanaAddress = (address?: string) => {
+const isValidSolanaAddress = (address) => {
   if (!address || typeof address !== 'string') return false;
   try {
     const key = new PublicKey(address);
@@ -19,20 +19,20 @@ const isValidSolanaAddress = (address?: string) => {
   }
 };
 
-const buildLoginMessage = (sessionId: string, nonce: string) =>
+const buildLoginMessage = (sessionId, nonce) =>
   `Snowy Login\nSession: ${sessionId}\nNonce: ${nonce}\nThis action is free and does not submit a transaction.`;
 
-const hashPassword = async (password: string) => {
+const hashPassword = async (password) => {
   const salt = await bcrypt.genSalt(10);
   return bcrypt.hash(password, salt);
 };
 
-const verifyPassword = async (password: string, hash: string) => bcrypt.compare(password, hash);
+const verifyPassword = async (password, hash) => bcrypt.compare(password, hash);
 
 // Get or create user session
-router.post('/session', async (req: Request, res: Response) => {
+router.post('/session', async (req, res) => {
   try {
-    const sessionId = (req as any).sessionId;
+    const sessionId = req.sessionId;
     const walletAddress = req.body.walletAddress;
     
     if (walletAddress) {
@@ -84,14 +84,14 @@ router.post('/session', async (req: Request, res: Response) => {
       userId: user?.id || null,
       referralCode: user?.referral_code || null,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Session error:', error);
     res.status(500).json({ error: error.message || 'Failed to get session' });
   }
 });
 
 // Username/password register
-router.post('/register', async (req: Request, res: Response) => {
+router.post('/register', async (req, res) => {
   try {
     const { username, password, walletAddress, nickname } = req.body;
     if (!username || typeof username !== 'string' || username.trim().length < 3) {
@@ -130,14 +130,14 @@ router.post('/register', async (req: Request, res: Response) => {
     }
 
     return res.json({ user: user.rows[0] });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Register error:', error);
     res.status(500).json({ error: error.message || 'Failed to register' });
   }
 });
 
 // Username/password login
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', async (req, res) => {
   try {
     const { username, password, walletAddress } = req.body;
     if (!username || !password) {
@@ -167,7 +167,7 @@ router.post('/login', async (req: Request, res: Response) => {
       );
       await query(
         'UPDATE user_sessions SET wallet_address = $1 WHERE session_id = $2',
-        [walletAddress, (req as any).sessionId]
+        [walletAddress, req.sessionId]
       );
     }
 
@@ -178,16 +178,16 @@ router.post('/login', async (req: Request, res: Response) => {
       nickname: user.nickname,
       referralCode: user.referral_code,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: error.message || 'Failed to login' });
   }
 });
 
 // Wallet login challenge (returns nonce + message to sign)
-router.get('/wallet-challenge', async (req: Request, res: Response) => {
+router.get('/wallet-challenge', async (req, res) => {
   try {
-    const sessionId = (req as any).sessionId;
+    const sessionId = req.sessionId;
     const nonce = randomBytes(16).toString('hex');
 
     await query(
@@ -200,16 +200,16 @@ router.get('/wallet-challenge', async (req: Request, res: Response) => {
       nonce,
       message: buildLoginMessage(sessionId, nonce),
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Wallet challenge error:', error);
     res.status(500).json({ error: error.message || 'Failed to create challenge' });
   }
 });
 
 // Wallet login verify
-router.post('/wallet-verify', async (req: Request, res: Response) => {
+router.post('/wallet-verify', async (req, res) => {
   try {
-    const sessionId = (req as any).sessionId;
+    const sessionId = req.sessionId;
     const { walletAddress, signature } = req.body;
 
     if (!walletAddress || !signature) {
@@ -253,16 +253,16 @@ router.post('/wallet-verify', async (req: Request, res: Response) => {
       nickname: user.nickname || null,
       referralCode: user.referral_code || null,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Wallet verify error:', error);
     res.status(500).json({ error: error.message || 'Failed to verify signature' });
   }
 });
 
 // Create/update profile (nickname + wallet)
-router.post('/profile', async (req: Request, res: Response) => {
+router.post('/profile', async (req, res) => {
   try {
-    const sessionId = (req as any).sessionId;
+    const sessionId = req.sessionId;
     const { walletAddress, nickname } = req.body;
 
     if (!walletAddress || typeof walletAddress !== 'string') {
@@ -324,17 +324,17 @@ router.post('/profile', async (req: Request, res: Response) => {
       nickname: row.nickname,
       referralCode: row.referral_code,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Profile save error:', error);
     res.status(500).json({ error: error.message || 'Failed to save profile' });
   }
 });
 
 // Get user info
-router.get('/user', async (req: Request, res: Response) => {
+router.get('/user', async (req, res) => {
   try {
-    const sessionId = (req as any).sessionId;
-    const walletAddress = req.query.walletAddress as string;
+    const sessionId = req.sessionId;
+    const walletAddress = req.query.walletAddress;
     
     let user;
     
@@ -386,7 +386,7 @@ router.get('/user', async (req: Request, res: Response) => {
         giveawayWeight: parseInt(giveawayEntries.rows[0].total_weight) || 0,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get user error:', error);
     res.status(500).json({ error: error.message || 'Failed to get user' });
   }

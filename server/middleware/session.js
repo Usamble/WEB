@@ -1,9 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { query } from '../db/index.js';
 
 // Generate or retrieve session ID
-export const sessionMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const sessionMiddleware = async (req, res, next) => {
   try {
     // Check for existing session in cookie or header
     let sessionId = req.cookies?.sessionId || req.headers['x-session-id'] as string;
@@ -14,7 +13,7 @@ export const sessionMiddleware = async (req: Request, res: Response, next: NextF
     }
     
     // Store session ID in request for use in routes
-    (req as any).sessionId = sessionId;
+    req.sessionId = sessionId;
     
     // Set session cookie (30 days expiry)
     res.cookie('sessionId', sessionId, {
@@ -33,7 +32,7 @@ export const sessionMiddleware = async (req: Request, res: Response, next: NextF
          DO UPDATE SET last_active = NOW()`,
         [sessionId]
       );
-    } catch (error: any) {
+    } catch (error) {
       // Silently ignore database errors if database isn't available
       if (error.code === '28000' || error.code === '3D000' || error.code === 'ECONNREFUSED' || error.code === '42P01') {
         // Database not available - continue without session tracking
@@ -50,8 +49,8 @@ export const sessionMiddleware = async (req: Request, res: Response, next: NextF
 };
 
 // Validate session exists
-export const validateSession = async (req: Request, res: Response, next: NextFunction) => {
-  const sessionId = (req as any).sessionId;
+export const validateSession = async (req, res, next) => {
+  const sessionId = req.sessionId;
   
   if (!sessionId) {
     return res.status(401).json({ error: 'Session required' });
@@ -75,7 +74,7 @@ export const validateSession = async (req: Request, res: Response, next: NextFun
 };
 
 // Get or create user from wallet address
-export const getUserFromWallet = async (walletAddress: string) => {
+export const getUserFromWallet = async (walletAddress) => {
   try {
     // Try to get existing user
     let result = await query(
@@ -106,9 +105,8 @@ export const getUserFromWallet = async (walletAddress: string) => {
 };
 
 // Generate referral code from wallet address
-function generateReferralCode(walletAddress: string): string {
+function generateReferralCode(walletAddress) {
   // Use first 8 chars of wallet address + hash
   const hash = walletAddress.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   return `SNOWY-${walletAddress.substring(0, 8).toUpperCase()}-${hash.toString(36).toUpperCase().substring(0, 4)}`;
 }
-

@@ -1,13 +1,13 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 import { query } from '../db/index.js';
 
 const router = Router();
 
 // Create giveaway entry
-router.post('/enter', async (req: Request, res: Response) => {
+router.post('/enter', async (req, res) => {
   try {
     const { entryMethod, referralCode } = req.body;
-    const sessionId = (req as any).sessionId;
+    const sessionId = req.sessionId;
     const walletAddress = req.body.walletAddress;
     
     if (!entryMethod) {
@@ -82,17 +82,17 @@ router.post('/enter', async (req: Request, res: Response) => {
       success: true,
       entry: result.rows[0],
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Enter giveaway error:', error);
     res.status(500).json({ error: error.message || 'Failed to enter giveaway' });
   }
 });
 
 // Get user's giveaway stats
-router.get('/stats', async (req: Request, res: Response) => {
+router.get('/stats', async (req, res) => {
   try {
-    const sessionId = (req as any).sessionId;
-    const walletAddress = req.query.walletAddress as string;
+    const sessionId = req.sessionId;
+    const walletAddress = req.query.walletAddress;
     
     let userId = null;
     if (walletAddress) {
@@ -142,17 +142,17 @@ router.get('/stats', async (req: Request, res: Response) => {
       shareEntries: parseInt(stats.share_entries) || 0,
       referEntries: parseInt(stats.refer_entries) || 0,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get giveaway stats error:', error);
     res.status(500).json({ error: error.message || 'Failed to get giveaway stats' });
   }
 });
 
 // Get user's referral code
-router.get('/referral-code', async (req: Request, res: Response) => {
+router.get('/referral-code', async (req, res) => {
   try {
-    const sessionId = (req as any).sessionId;
-    const walletAddress = req.query.walletAddress as string;
+    const sessionId = req.sessionId;
+    const walletAddress = req.query.walletAddress;
     
     let referralCode = null;
     
@@ -186,14 +186,14 @@ router.get('/referral-code', async (req: Request, res: Response) => {
       referralCode,
       referralLink: `${process.env.FRONTEND_URL || 'http://localhost:5173'}?ref=${referralCode}`,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get referral code error:', error);
     res.status(500).json({ error: error.message || 'Failed to get referral code' });
   }
 });
 
 // Admin: Export participants
-router.get('/admin/export', async (req: Request, res: Response) => {
+router.get('/admin/export', async (req, res) => {
   try {
     // Basic admin check (should be enhanced with proper auth)
     const adminKey = req.headers['x-admin-key'];
@@ -217,11 +217,10 @@ router.get('/admin/export', async (req: Request, res: Response) => {
       participants: result.rows,
       totalParticipants: result.rows.length,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Export participants error:', error);
     res.status(500).json({ error: error.message || 'Failed to export participants' });
   }
 });
 
 export default router;
-

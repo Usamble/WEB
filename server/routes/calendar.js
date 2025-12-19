@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 import { query } from '../db/index.js';
 
 const router = Router();
@@ -13,10 +13,10 @@ const REWARD_TYPES = [
 ];
 
 // Get calendar status for user
-router.get('/status', async (req: Request, res: Response) => {
+router.get('/status', async (req, res) => {
   try {
-    const sessionId = (req as any).sessionId;
-    const walletAddress = req.query.walletAddress as string;
+    const sessionId = req.sessionId;
+    const walletAddress = req.query.walletAddress;
     
     let userId = null;
     if (walletAddress) {
@@ -59,17 +59,17 @@ router.get('/status', async (req: Request, res: Response) => {
       })),
       canUnlockToday: canUnlock,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get calendar status error:', error);
     res.status(500).json({ error: error.message || 'Failed to get calendar status' });
   }
 });
 
 // Unlock calendar day
-router.post('/unlock', async (req: Request, res: Response) => {
+router.post('/unlock', async (req, res) => {
   try {
     const { day } = req.body;
-    const sessionId = (req as any).sessionId;
+    const sessionId = req.sessionId;
     const walletAddress = req.body.walletAddress;
     
     if (!day || day < 1 || day > 24) {
@@ -156,17 +156,17 @@ router.post('/unlock', async (req: Request, res: Response) => {
       rewardData,
       unlockMethod,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Unlock calendar error:', error);
     res.status(500).json({ error: error.message || 'Failed to unlock calendar day' });
   }
 });
 
 // Claim calendar reward
-router.post('/claim', async (req: Request, res: Response) => {
+router.post('/claim', async (req, res) => {
   try {
     const { day } = req.body;
-    const sessionId = (req as any).sessionId;
+    const sessionId = req.sessionId;
     const walletAddress = req.body.walletAddress;
     
     if (!day || day < 1 || day > 24) {
@@ -229,18 +229,14 @@ router.post('/claim', async (req: Request, res: Response) => {
       rewardType: entry.reward_type,
       rewardData: entry.reward_data,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Claim calendar error:', error);
     res.status(500).json({ error: error.message || 'Failed to claim reward' });
   }
 });
 
 // Check unlock conditions
-async function checkUnlockConditions(
-  userId: number | null,
-  sessionId: string,
-  day: number
-): Promise<string | null> {
+async function checkUnlockConditions(userId, sessionId, day) {
   try {
     // Check if user has generated a Snowy
     let hasGenerated = false;
@@ -293,7 +289,7 @@ async function checkUnlockConditions(
 }
 
 // Get current day of December (1-24)
-function getCurrentDay(): number {
+function getCurrentDay() {
   const now = new Date();
   const month = now.getMonth(); // 0-11
   const day = now.getDate(); // 1-31
@@ -308,4 +304,3 @@ function getCurrentDay(): number {
 }
 
 export default router;
-

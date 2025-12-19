@@ -47,14 +47,14 @@ pool.on('error', (err) => {
 });
 
 // Helper function to execute queries
-export const query = async (text: string, params?: any[]) => {
+export const query = async (text, params) => {
   const start = Date.now();
   try {
     const res = await pool.query(text, params);
     const duration = Date.now() - start;
     console.log('Executed query', { text, duration, rows: res.rowCount });
     return res;
-  } catch (error: any) {
+  } catch (error) {
     // Don't log database errors if database isn't available
     if (error.code === '28000' || error.code === '3D000') {
       // Authentication or database doesn't exist - expected if PostgreSQL isn't set up
@@ -94,7 +94,7 @@ export const initDatabase = async () => {
     for (const statement of statements) {
       try {
         await query(statement);
-      } catch (error: any) {
+      } catch (error) {
         // Ignore "already exists" errors
         if (!error.message.includes('already exists') && !error.message.includes('duplicate')) {
           console.warn('Schema execution warning:', error.message);
@@ -103,7 +103,7 @@ export const initDatabase = async () => {
     }
     
     console.log('✅ Database schema initialized');
-  } catch (error: any) {
+  } catch (error) {
     // Silently fail if database isn't available
     if (error.code === '28000' || error.code === '3D000' || error.code === 'ECONNREFUSED') {
       console.warn('⚠️  Database not available - app will run without database features');
@@ -115,4 +115,3 @@ export const initDatabase = async () => {
 };
 
 export default pool;
-
