@@ -178,8 +178,14 @@ initDatabase().catch((error) => {
   console.warn('💡 To enable database features, install PostgreSQL and update .env with database credentials');
 });
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`🚀 Snowy backend server running on http://localhost:${PORT}`);
-  console.log(`📊 Database: ${process.env.DB_NAME || 'snowy'}`);
-});
+// Only start server if not in Vercel environment
+if (process.env.VERCEL !== '1') {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`🚀 Snowy backend server running on http://localhost:${PORT}`);
+    console.log(`📊 Database: ${process.env.DB_NAME || 'snowy'}`);
+  });
+}
+
+// Export for Vercel
+export default app;
