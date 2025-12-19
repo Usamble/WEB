@@ -18,7 +18,8 @@ const pool = new Pool(
   useConnectionString
     ? {
         connectionString,
-        ssl: { rejectUnauthorized: false }, // Supabase/managed Postgres typically needs SSL
+        // Allow self-signed in pooler; Supabase uses valid certs but some environments need this
+        ssl: { rejectUnauthorized: false },
         max: 20,
         idleTimeoutMillis: 30000,
         connectionTimeoutMillis: 4000,
