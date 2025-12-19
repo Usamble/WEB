@@ -237,14 +237,13 @@ router.post('/wallet-verify', async (req, res) => {
       return res.status(401).json({ error: 'Signature verification failed' });
     }
 
-    // Clear nonce to prevent replay
+    // Create or fetch user first (avoids FK issues on user_sessions)
+    const user = await getUserFromWallet(walletAddress);
+    // Clear nonce and bind wallet to session
     await query(
       'UPDATE user_sessions SET login_nonce = NULL, wallet_address = $1 WHERE session_id = $2',
       [walletAddress, sessionId]
     );
-
-    // Create or fetch user
-    const user = await getUserFromWallet(walletAddress);
 
     res.json({
       sessionId,
