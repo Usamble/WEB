@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const { Pool } = pg;
+// Relax TLS globally for pg (Supabase pooler uses cert chain that can trip strict verification in serverless)
+pg.defaults.ssl = { rejectUnauthorized: false };
 
 // Prefer a single connection string (works with Supabase / managed Postgres)
 const connectionString =

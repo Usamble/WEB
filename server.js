@@ -31,6 +31,7 @@ const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Middleware
+app.set('trust proxy', 1); // Needed on Vercel to respect X-Forwarded-For and keep rate limit happy
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,
