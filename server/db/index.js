@@ -13,6 +13,11 @@ const connectionString =
 
 const useConnectionString = Boolean(connectionString);
 
+// Supabase pooler + some hosts use self-signed certs; relax TLS for serverless envs
+if (useConnectionString) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = process.env.NODE_TLS_REJECT_UNAUTHORIZED || '0';
+}
+
 // Database connection pool
 const pool = new Pool(
   useConnectionString
