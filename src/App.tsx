@@ -1,4 +1,5 @@
 import { Toaster } from 'react-hot-toast';
+import { Analytics } from '@vercel/analytics/react';
 import Hero from './components/Hero';
 import ContractAddress from './components/ContractAddress';
 import LiveStats from './components/LiveStats';
@@ -15,6 +16,7 @@ function App() {
   return (
     <div className="min-h-screen" style={{ position: 'relative' }}>
       <Toaster position="top-right" />
+      <Analytics />
       
       {/* Ghost Cursor Effect */}
       <GhostCursor
