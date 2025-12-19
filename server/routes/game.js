@@ -144,11 +144,12 @@ router.get('/leaderboard', async (req, res) => {
     const result = await query(
       `SELECT 
         l.*,
-        u.wallet_address,
+        COALESCE(u.wallet_address, us.wallet_address) as wallet_address,
         u.nickname,
         u.referral_code
        FROM leaderboards l
        LEFT JOIN users u ON l.user_id = u.id
+       LEFT JOIN user_sessions us ON l.session_id = us.session_id
        WHERE l.daily_score > 0 OR l.weekly_score > 0 OR l.all_time_score > 0
        ORDER BY ${orderBy}
        LIMIT $1`,
