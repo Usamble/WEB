@@ -10,7 +10,8 @@ router.post('/submit-score', async (req, res) => {
     const sessionId = req.sessionId;
     const walletAddress = req.body.walletAddress;
     
-    if (!score || typeof score !== 'number' || score < 0) {
+    // Accept numeric scores including 0
+    if (typeof score !== 'number' || Number.isNaN(score) || score < 0) {
       return res.status(400).json({ error: 'Valid score required' });
     }
     
