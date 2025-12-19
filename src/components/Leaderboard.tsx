@@ -118,11 +118,6 @@ const Leaderboard = () => {
           <p className="text-lg text-gray-600">
             Top players in Snowy Run!
           </p>
-          {source === 'local' && !error && (
-            <p className="text-sm text-amber-700 mt-2">
-              Showing local/offline scores. Start the backend for live leaderboard.
-            </p>
-          )}
         </motion.div>
 
         {/* Type Selector */}
