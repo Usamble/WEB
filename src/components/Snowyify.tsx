@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef } from 'react';
-import { FaUpload, FaDownload, FaTimes } from 'react-icons/fa';
+import { FaUpload, FaDownload, FaTimes, FaCheck } from 'react-icons/fa';
 import { FaWandMagicSparkles, FaXTwitter } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
 import { generateSnowmanAvatar } from '../services/aiGeneration';
@@ -10,7 +10,6 @@ import { useTokenBalance } from '../hooks/useTokenBalance';
 import StyleSelector, { SnowyStyle, type SnowyStyle as SnowyStyleType } from './StyleSelector';
 import AvatarGallery from './AvatarGallery';
 import RarityDisplay from './RarityDisplay';
-import TokenGate from './TokenGate';
 
 const Snowyify = () => {
   const MAX_GENERATIONS_PER_DAY = 5;
@@ -430,7 +429,7 @@ const Snowyify = () => {
                           <FaCheck />
                         </motion.div>
                       </div>
-                      <RarityDisplay rarityTraits={rarityTraits} />
+                      <RarityDisplay rarityTraits={rarityTraits} snowyId={snowyId} />
                     </motion.div>
                   ) : (
                     <motion.div key="placeholder" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-gray-600">

@@ -1,9 +1,19 @@
 import { motion } from 'framer-motion';
-import { FaTelegram, FaChartLine, FaGift } from 'react-icons/fa';
+import { FaGift } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 
 const SocialLinks = () => {
-  const socialPlatforms = [
+  const socialPlatforms: Array<{
+    icon: any;
+    title: string;
+    description: string;
+    buttonText: string;
+    link: string;
+    color: string;
+    gradient: string;
+    subLink?: string;
+    subText?: string;
+  }> = [
     {
       icon: FaXTwitter,
       title: 'X Community',

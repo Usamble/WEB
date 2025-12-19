@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaShare, FaFilter } from 'react-icons/fa';
+import { FaShare } from 'react-icons/fa';
 import { getMySnowys } from '../services/snowyApi';
 import { useWallet } from '../hooks/useWallet';
 import toast from 'react-hot-toast';

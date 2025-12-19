@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 const SnowyRun = () => {
   const playfieldRef = useRef<HTMLDivElement>(null);
   const [playfieldWidth, setPlayfieldWidth] = useState(960);
-  const { gameState, startGame, jump, slide, dash, pauseGame, dailyRunCount, canPlay, nextLevelScore, currentLevel, lootboxReward, claimLootbox, pendingLootEffect, purchaseUpgrade, playerSkin, unlockedSkins } = useSnowyRun(playfieldWidth);
+  const { gameState, startGame, jump, slide, dash, pauseGame, canPlay, nextLevelScore, currentLevel, lootboxReward, claimLootbox, pendingLootEffect, playerSkin } = useSnowyRun(playfieldWidth);
   const { walletAddress, connectWallet, isAuthenticating } = useWallet();
   const [guestMode, setGuestMode] = useState(false);
   const [authComplete, setAuthComplete] = useState(false);
@@ -30,11 +30,6 @@ const SnowyRun = () => {
       : playerSkin === 'blaze'
         ? 'drop-shadow-[0_0_16px_rgba(248,113,113,0.6)] saturate-[1.1]'
         : 'drop-shadow-[0_3px_6px_rgba(0,0,0,0.2)]';
-  const upgradeOptions = [
-    { key: 'startSpeed' as const, label: 'Start Speed Boost', desc: 'Begin faster each run', cost: 220 },
-    { key: 'skinFrost' as const, label: 'Frost Look', desc: 'Cool blue glow', cost: 180, owned: unlockedSkins.frost },
-    { key: 'skinBlaze' as const, label: 'Blaze Look', desc: 'Warm ember glow', cost: 180, owned: unlockedSkins.blaze },
-  ];
   const currentLevelStart = currentLevel?.minScore ?? 0;
   const levelSpan = nextLevelScore ? Math.max(1, nextLevelScore - currentLevelStart) : 1;
   const nextLevelProgress = nextLevelScore

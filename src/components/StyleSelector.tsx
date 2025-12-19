@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import { FaSnowflake } from 'react-icons/fa';
 
 const SNOWY_STYLES = {
   DEFAULT: 'default',

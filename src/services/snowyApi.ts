@@ -2,13 +2,6 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
-// Get session ID from cookie or generate
-const getSessionId = (): string => {
-  // Session ID is set by backend via cookie
-  // For API calls, we'll let the backend handle it via cookies
-  return '';
-};
-
 // Save Snowy generation
 export const saveSnowyGeneration = async (
   imageUrl: string,

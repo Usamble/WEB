@@ -52,7 +52,7 @@ const AdventCalendar = () => {
     }
 
     try {
-      const result = await unlockCalendarDay(day, walletAddress || undefined);
+      await unlockCalendarDay(day, walletAddress || undefined);
       toast.success(`Day ${day} unlocked! 🎉`);
       
       // Refresh calendar
@@ -67,7 +67,7 @@ const AdventCalendar = () => {
 
   const handleClaim = async (day: number) => {
     try {
-      const result = await claimCalendarReward(day, walletAddress || undefined);
+      await claimCalendarReward(day, walletAddress || undefined);
       toast.success(`Reward claimed! 🎁`);
       
       // Refresh calendar

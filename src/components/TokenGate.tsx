@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { FaLock, FaUnlock } from 'react-icons/fa';
+import { FaLock } from 'react-icons/fa';
 import { useWallet } from '../hooks/useWallet';
 
 interface TokenGateProps {

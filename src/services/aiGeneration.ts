@@ -500,9 +500,8 @@ export const generateWithReplicate = async (
     
     // Build optimized prompt for high-quality 3D cartoon snowman (like elf quality) with landscape background
     const basePrompt = 'A charming 3D cartoon snowman character, close-up portrait, smooth porcelain-like texture, rosy cheeks, friendly smile, high quality 3D render, Pixar animation quality, Disney style, professional character design, soft volumetric lighting, cinematic quality, detailed textures, three-dimensional depth, bokeh background, winter landscape, snowy mountains in background, pine trees, beautiful scenery, natural environment, premium quality, character portrait';
-    const prompt = enhancedDescription 
-      ? `${basePrompt}, ${enhancedDescription}`
-      : basePrompt;
+    const enhancedDescription = textDescription ? `, ${textDescription}` : '';
+    const prompt = `${basePrompt}${enhancedDescription}`;
     
     const input: any = {
       prompt: prompt,

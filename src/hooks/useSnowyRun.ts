@@ -227,7 +227,7 @@ export const useSnowyRun = (playfieldWidth = 900) => {
     label: string;
     rewardKind?: LootKind;
   } | null>(null);
-  const animationFrameRef = useRef<number>();
+  const animationFrameRef = useRef<number | undefined>(undefined);
   const lastObstacleTime = useRef<number>(0);
   const lastCollectibleTime = useRef<number>(0);
   const currentWave = useRef<WaveConfig | null>(null);
