@@ -5,7 +5,9 @@ import { query } from '../db/index.js';
 export const sessionMiddleware = async (req, res, next) => {
   try {
     // Check for existing session in cookie or header
-    let sessionId = req.cookies?.sessionId || req.headers['x-session-id'] as string;
+    let sessionId =
+      req.cookies?.sessionId ||
+      (typeof req.headers['x-session-id'] === 'string' ? req.headers['x-session-id'] : undefined);
     
     if (!sessionId) {
       // Generate new session ID
