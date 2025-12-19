@@ -40,8 +40,8 @@ app.use(cookieParser());
 app.use(botProtection);
 app.use(sessionMiddleware);
 
-// Health check
-app.get('/health', (req, res) => {
+// Health check (supports /health and /api/health)
+app.get(['/health', '/api/health'], (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
